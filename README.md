@@ -14,7 +14,7 @@ wp_mysql_password: my_password
 root_mysql_password: my_password
 
 
-## Edit `provisioning/templates/.my.cnf` and set the values:
+## `Edit `provisioning/templates/.my.cnf` and set the values:
 
 user=root
 password=my_password
@@ -42,5 +42,5 @@ $ sudo service mysql restart
 
 ```
 
-   После выполнения этих команд wordpress будет доступен на  <http://192.168.53.3:8080> 
+   После выполнения этих команд Wordpress будет доступен на  <http://192.168.53.3:8080> 
 
