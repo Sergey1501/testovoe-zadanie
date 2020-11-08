@@ -1,0 +1,136 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+ 
+  - name: Add user to remote hosts
+    user: name=serviceuser groups=sudo shell=/bin/bash password=$6$PcBycM3R1pQtsC0k$EoJspthprlQf7R.8fxM5tnaKpweLaYCWBu6W0QDz8ycLU7biwLrT2VcMg51XE9n1xj8TscBo/Hy57gB7hPvjU0
+    
+- hosts: web-server
+  become: yes
+  
+  vars:
+    - wp_mysql_db: wordpress
+    - wp_mysql_user: serviceuser
+    - wp_mysql_password: 06_11_2020
+    - wp_mysql_host: "192.168.53.4"
+    - root_mysql_password: 08_11_2020
+  tasks:
+      
+  - name: Install required software host web-server
+    apt: name={{ item }} state=present
+    become: true
+    with_items:
+      - apache2
+      - php-gd 
+      - php-ssh2
+      - php-mysql
+      - php
+      - python-mysqldb
+      - libapache2-mod-php
+      - mysql-client
+    
+  - name: Download WordPress  
+    become: true
+    get_url: 
+      url=https://wordpress.org/latest.tar.gz 
+      dest=/tmp/wordpress.tar.gz
+      validate_certs=no 
+      
+  - name: сreate directory
+    file: path=/var/www/wordpress mode=0755 owner=www-data group=www-data state=directory    
+
+  - name: Extract WordPress  
+    unarchive: src=/tmp/wordpress.tar.gz dest=/var/www/ copy=no 
+    become: true
+
+  - name: Update default Apache site
+    become: true
+    lineinfile: 
+      dest=/etc/apache2/sites-enabled/000-default.conf 
+      regexp="(.)+DocumentRoot /var/www/html"
+      line="DocumentRoot /var/www/wordpress"
+      
+  - name: restart apache
+    service: name=apache2 state=restarted
+    become: true
+
+  - name: Copy sample config file
+    command: mv /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php creates=/var/www/wordpress/wp-config.php
+    become: true
+    
+  - name: Create /root/.my.cnf (from template) with password credentials
+    template: src=../templates/.my.cnf dest=/root/.my.cnf owner=root mode=0600
+    become: true
+    
+  - name: Copy WordPress config file
+    template: src=../templates/wp-config.php dest=/var/www/wordpress/wp-config.php owner=www-data group=www-data mode=0640 
+    become: true
+    
+- hosts: sql-server
+  become: yes
+  
+  vars:
+    - wp_mysql_db: wordpress
+    - wp_mysql_user: serviceuser
+    - wp_mysql_password: 06_11_2020
+    - root_mysql_password: 08_11_2020
+    
+  tasks:
+  
+  - name: Specify MySQL root password before installing
+    debconf: name='mysql-server' question='mysql-server/root_password' value='{{ root_mysql_password | quote }}' vtype='password'
+    become: true
+    
+  - name: Confirm MySQL root password before installing
+    debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{ root_mysql_password | quote }}' vtype='password'
+    become: true
+  
+  - name: Install required software host sql-server
+    apt: name={{ item }} state=present
+    become: true
+    with_items:
+      - mysql-server
+      - mysql-client
+      - python-mysqldb
+      
+  - name: Create mysql database
+    become: true
+    mysql_db: 
+      name={{ wp_mysql_db }} 
+      state=present
+      login_unix_socket=/var/run/mysqld/mysqld.sock
+      login_user=root 
+      login_password={{ root_mysql_password }}
+      
+  - name: Create mysql user
+    become: true
+    mysql_user:
+      name={{ wp_mysql_user }}
+      password={{ wp_mysql_password }}
+      priv=*.*:ALL,GRANT
+      state=present
+      login_unix_socket=/var/run/mysqld/mysqld.sock
+      login_user=root 
+      login_password={{ root_mysql_password }}
+      
+  - name: Update mysqld config file
+    lineinfile:
+      dest=/etc/mysql/mysql.conf.d/mysqld.cnf
+      regexp='^bind-address		= 127.0.0.1'
+      insertbefore=BOF
+      line='bind-address		= 0.0.0.0'
+      
+  - name: restart mysql
+    service: name=mysql state=restarted
+    become: true
+    
+      
+      
+  
+
+    
+
+  
+      
+
