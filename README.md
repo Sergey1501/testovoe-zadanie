@@ -8,11 +8,11 @@ $ cd testovoe-zadanie
 
 ## `Edit `provisioning/playbook.yml` and set the values:
 
-wp_mysql_db: my_database
+```wp_mysql_db: my_database
 wp_mysql_user: my_user
 wp_mysql_password: my_password
 root_mysql_password: my_password
-
+```
 
 ## `Edit `provisioning/templates/.my.cnf` and set the values:
 
