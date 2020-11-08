@@ -6,7 +6,7 @@ $ cd testovoe-zadanie
 
 ```
 
-```Edit `provisioning/playbook.yml` and set the values:
+   Edit `provisioning/playbook.yml` and set the values:
 
 wp_mysql_db: my_database
 wp_mysql_user: my_user
