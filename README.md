@@ -40,10 +40,12 @@ GRANT ALL PRIVILEGES ON `wordpress`.* TO serviceuser@192.168.53.3 IDENTIFIED BY 
 Перезагрузка mysql
 $ sudo service mysql restart
 
-```
-
-```После выполнения этих команд Wordpress будет доступен на  <http://192.168.53.3:8080>
-
+После выполнения этих команд Wordpress будет доступен на  <http://192.168.53.3:8080>
 
 ```
+
+`
+
+
+
 
