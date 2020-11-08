@@ -1,6 +1,7 @@
 ## Installation
 
-```bash
+```
+bash
 $ git clone https://github.com/Sergey1501/testovoe-zadanie.git
 $ cd testovoe-zadanie
 
@@ -20,7 +21,8 @@ user=root
 password=my_password
 ```
 
-```bash
+```
+bash
 $ vagrant up
 
 После установки, чтобы wordpress смог соединится с mysql нужно выполнить команды:
@@ -43,8 +45,6 @@ $ sudo service mysql restart
 После выполнения этих команд Wordpress будет доступен на  <http://192.168.53.3:8080>
 
 ```
-
-`
 
 
 
