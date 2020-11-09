@@ -22,6 +22,12 @@ root_mysql_password: my_password
 user=root
 password=my_password
 ```
+## `Edit `provisioning/templates/wp-config.php` and set the values:
+define( 'DB_NAME', 'my_database'
+define( 'DB_USER', 'my_user'
+define( 'DB_PASSWORD', 'my_password'
+define( 'DB_HOST', 'my_ip'
+
 
 ```bash
 $ vagrant up
